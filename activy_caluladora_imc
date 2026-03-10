@@ -1,0 +1,65 @@
+package com.example.calculadoraimc
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val peso = findViewById<EditText>(R.id.edit_text_peso)
+        val alturaTexto = findViewById<TextView>(R.id.textview_altura_valor)
+        val seekAltura = findViewById<SeekBar>(R.id.seekbar_altura)
+        val botaoCalcular = findViewById<Button>(R.id.button_calcular)
+        val botaoLimpar = findViewById<Button>(R.id.button_limpar)
+
+        var altura = 180
+
+        // Atualiza altura ao mover a SeekBar
+        seekAltura.progress = altura
+        alturaTexto.text = "$altura cm"
+
+        seekAltura.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                altura = progress
+                alturaTexto.text = "$altura cm"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        // Botão calcular IMC
+        botaoCalcular.setOnClickListener {
+
+            val pesoTexto = peso.text.toString()
+
+            if (pesoTexto.isEmpty()) {
+                Toast.makeText(this, "Digite seu peso", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val pesoValor = pesoTexto.toFloat()
+            val alturaMetros = altura / 100.0
+
+            val imc = pesoValor / (alturaMetros * alturaMetros)
+
+            Toast.makeText(this, "Seu IMC é %.2f".format(imc), Toast.LENGTH_LONG).show()
+        }
+
+        // Botão limpar
+        botaoLimpar.setOnClickListener {
+            peso.text.clear()
+            seekAltura.progress = 180
+            alturaTexto.text = "180 cm"
+        }
+    }
+}
